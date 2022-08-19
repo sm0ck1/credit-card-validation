@@ -4,9 +4,11 @@ class CreditCart extends React.Component {
         this.state = {
             buttonDisabled: false,
             success: false,
-            cardNumber: '',
-            expiryDate: '',
-            cvv: '',
+            data: {
+                cardNumber: '',
+                expiryDate: '',
+                cvv: ''
+            },
             errors: {}
         };
 
@@ -14,7 +16,7 @@ class CreditCart extends React.Component {
 
     //Check if card is American Express
     isAmericanCard = () => {
-        if (/^(34|37)/.test(this.state.cardNumber)) {
+        if (/^(34|37)/.test(this.state.data.cardNumber)) {
             this.setState({'placeholderCvv': '****'});
             return true;
         }
@@ -100,9 +102,7 @@ class CreditCart extends React.Component {
         //Change placeholder in cvv field
         this.isAmericanCard();
 
-        this.setState({
-            [name]: value
-        });
+        this.setState({data: {...this.state.data, [name]: value}});
 
     }
 
@@ -115,7 +115,7 @@ class CreditCart extends React.Component {
         fetch('/api', {
             method: 'POST',
             headers: {'Content-Type': 'application/json'},
-            body: JSON.stringify(this.state)
+            body: JSON.stringify(this.state.data)
         })
             .then(response => response.json())
             .then(data => {
@@ -134,7 +134,7 @@ class CreditCart extends React.Component {
                 <div className="row">
                     <div className="col-12">
                         <label htmlFor="basic-url" className="form-label">Card number</label>
-                        <input placeholder="**** **** **** ****" className={"form-control " + (this.state.errors.cardNumber ? "is-invalid" : '')} type="text" name="cardNumber" value={this.state.cardNumber} onChange={this.handleChange}/>
+                        <input placeholder="**** **** **** ****" className={"form-control " + (this.state.errors.cardNumber ? "is-invalid" : '')} type="text" name="cardNumber" value={this.state.data.cardNumber} onChange={this.handleChange}/>
                         {this.state.errors.cardNumber &&
                             <div className="invalid-feedback">{this.state.errors.cardNumber}</div>}
 
@@ -143,13 +143,13 @@ class CreditCart extends React.Component {
                         <div className="row">
                             <div className="col-6">
                                 <label htmlFor="basic-url" className="form-label">Expiry date</label>
-                                <input placeholder="MM/YY" className={"form-control " + (this.state.errors.expiryDate ? "is-invalid" : '')} type="text" name="expiryDate" value={this.state.expiryDate} onChange={this.handleChange}/>
+                                <input placeholder="MM/YY" className={"form-control " + (this.state.errors.expiryDate ? "is-invalid" : '')} type="text" name="expiryDate" value={this.state.data.expiryDate} onChange={this.handleChange}/>
                                 {this.state.errors.expiryDate &&
                                     <div className="invalid-feedback">{this.state.errors.expiryDate}</div>}
                             </div>
                             <div className="col-6">
                                 <label htmlFor="basic-url" className="form-label">Security code</label>
-                                <input placeholder={this.state.placeholderCvv || '***'} className={"form-control " + (this.state.errors.cvv ? "is-invalid" : '')} type="text" name="cvv" value={this.state.cvv} onChange={this.handleChange}/>
+                                <input placeholder={this.state.placeholderCvv || '***'} className={"form-control " + (this.state.errors.cvv ? "is-invalid" : '')} type="text" name="cvv" value={this.state.data.cvv} onChange={this.handleChange}/>
                                 {this.state.errors.cvv &&
                                     <div className="invalid-feedback">{this.state.errors.cvv}</div>}
                             </div>
